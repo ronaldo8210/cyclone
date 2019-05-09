@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-g -Wall -std=c++11 -I/usr/include/boost -I./include
 
-SRCS=event_loop.cpp main.cpp
+SRCS=event_loop.cpp main.cpp tcp_server.cpp 
 
 LIBS=-L/usr/lib -lboost_thread -lpthread
 
