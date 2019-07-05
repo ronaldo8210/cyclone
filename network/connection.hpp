@@ -16,12 +16,13 @@ class EventLoop;
 class Socket;
 class Channel;
 
-class Connection : boost::noncopyable, 
+class Connection :  
     public enable_shared_from_this<Connection> {
  public:
   Connection(EventLoop *io_loop, int fd);
   ~Connection();
 
+  /*
   EventLoop* io_loop() { return io_loop_; }
   bool connected() { return phase_ == kConnected; }
   bool disconnected() { return phase_ == kDisconnected; }
@@ -63,7 +64,8 @@ class Connection : boost::noncopyable,
   scoped_ptr<Channel> channel_;
   Buffer recv_buffer_;
   Buffer send_buffer_;
-  phase phase_;
+  phase phase_; 
+  */
 };
 
 }  // namespace cyclone

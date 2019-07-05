@@ -9,7 +9,9 @@
 
 namespace cyclone {
 
-class Channel : boost::noncopyable {
+class EventLoop;
+
+class Channel {
  public:
   typedef boost::function<void()> event_callback;
 

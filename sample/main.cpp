@@ -8,7 +8,7 @@
 #include <event_loop.hpp>
 
 #include <iostream>
-#include <boost/thread/thread.hpp>
+#include <thread>
 
 using namespace cyclone;
 using namespace std;
@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
   EventLoop eventLoop;
   eventLoop.loop();
 
-  boost::thread thrd(&func);
+  thread thrd(&func);
   thrd.join();
 
   return 0;
