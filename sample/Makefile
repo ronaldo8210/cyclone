@@ -5,6 +5,7 @@ NETWORK_DIR=${CUR_DIR}/network
 SAMPLE_DIR=${CUR_DIR}/sample
 COMMON_DIR=${CUR_DIR}/common
 POOL_DIR=${CUR_DIR}/pool
+POLLER_DIR=${CUR_DIR}/poller
 
 BOOST_INC_DIR=/usr/include/boost
 BOOST_LIB_DIR=/usr/lib
@@ -14,12 +15,14 @@ INC_DIR= -I${CUR_DIR} \
 		 -I${NETWORK_DIR} \
 		 -I${COMMON_DIR} \
 		 -I${POOL_DIR} \
-		 -I${BOOST_INC_DIR}
+		 -I${BOOST_INC_DIR} \
+		 -I${POLLER_DIR}
 
 SRC = ${wildcard ${CORE_DIR}/*.cpp} \
 	  ${wildcard ${NETWORK_DIR}/*.cpp} \
 	  ${wildcard ${COMMON_DIR}/*.cpp} \
       ${wildcard ${POOL_DIR}/*.cpp} \
+      ${wildcard ${POLLER_DIR}/*.cpp} \
 	  ${wildcard ${SAMPLE_DIR}/main.cpp}
 OBJ = ${patsubst %.cpp, %.o, ${SRC}}
 

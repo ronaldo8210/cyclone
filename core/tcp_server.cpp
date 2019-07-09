@@ -9,12 +9,16 @@
 
 namespace cyclone {
 
-TcpServer::TcpServer() {
+TcpServer::TcpServer(EventLoop *acceptor_loop, const InetAddress &listen_addr) {
 
 }
 
 TcpServer::~TcpServer() {
 
+}
+
+void TcpServer::set_io_thread_num(int io_thread_num) {
+  io_thread_num_ = io_thread_num;  
 }
 
 void TcpServer::start() {
@@ -29,6 +33,18 @@ void TcpServer::create_connection(int connfd) {
 // must be thread-safe
 void TcpServer::remove_connection() {
 
+}
+
+void TcpServer::set_connect_callback(connect_callback &cb) {
+  connect_cb_ = cb;
+}
+
+void TcpServer::set_message_callback(message_callback &cb) {
+  message_cb_ = cb;
+}
+  
+void TcpServer::set_write_complete_callback(write_complete_callback &cb) {
+  write_complete_cb_ = cb;
 }
 
 }  // namespace cyclone

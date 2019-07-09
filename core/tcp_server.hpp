@@ -17,25 +17,22 @@ namespace cyclone {
 class Acceptor;
 class EventLoop;
 class EventLoopThreadPool;
+class InetAddress;
 
 class TcpServer {
  public:
-  TcpServer();
+  TcpServer(EventLoop *acceptor_loop, const InetAddress &listen_addr);
   ~TcpServer();
 
-  void set_connect_callback(connect_callback &cb) {
-    connect_cb_ = cb;
-  }
-
-  void set_message_callback(message_callback &cb) {
-    message_cb_ = cb;
-  }
-  
-  void set_write_complete_callback(write_complete_callback &cb) {
-    write_complete_cb_ = cb;
-  }
+  void set_connect_callback(connect_callback &cb);
+  void set_message_callback(message_callback &cb);
+  void set_write_complete_callback(write_complete_callback &cb);
 
   void start();
+
+  void set_io_thread_num(int io_thread_num);
+
+  EventLoop* acceptor_loop();
 
  private:
   typedef map<string, connection_ptr> connection_map;
@@ -51,6 +48,7 @@ class TcpServer {
   EventLoopThreadPool *io_thread_pool_;
   Acceptor *acceptor_;
   connection_map connections_;
+
   bool started_;
   int io_thread_num_;
   int next_conn_id_;
