@@ -8,11 +8,17 @@
 
 #include <atomic>
 #include <functional>
+#include <mutex>
+#include <thread>
 #include <vector>
+
+#include <timestamp.hpp>
 
 namespace cyclone {
 
 class Channel;
+class Poller;
+class TimeQueue;
 
 class EventLoop {
  public:
@@ -43,7 +49,9 @@ class EventLoop {
   void wakeup();
 
  private:
-  EventLoop* current_loop();
+  std::thread::id thread_id_;  
+
+  static EventLoop* & get_loop_of_current_thread();
 
   typedef std::vector<Channel*> ChannelList;
 
@@ -53,7 +61,7 @@ class EventLoop {
 
   // const pid_t thread_id_;
 
-  Poll *poll_;
+  Poller *poller_;
 
   TimeQueue *time_queue_;
 
@@ -70,10 +78,14 @@ class EventLoop {
 
   int wakeup_fd_;
 
+  Channel *wakeup_channel_;
+
   // 用于保护pending_functors_队列的互斥量
   std::mutex mutex_;
 
-  const int poll_time_ms_;
+  const int poll_time_ms_ = 1000;
+
+  Timestamp poll_return_ts_;
 };
 
 }  // namespace cyclone

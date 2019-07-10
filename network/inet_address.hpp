@@ -6,11 +6,22 @@
 ***********************************************************************/
 #pragma once
 
+#include <netinet/in.h>
+
 namespace cyclone {
+
+// 前置声明
+namespace sockops {
+  const struct sockaddr* sockaddr_cast(const struct sockaddr_in6 *addr);
+}
 
 class InetAddress {
  public:
   InetAddress();
+
+  const struct sockaddr* get_sock_addr() const {
+    return sockops::sockaddr_cast(&addr6_);
+  }
 
  private:
   union {

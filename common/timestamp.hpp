@@ -6,13 +6,16 @@
 ***********************************************************************/
 #pragma once
 
+#include <algorithm>
+#include <stdint.h>
+
 namespace cyclone {
 
 class Timestamp {
  public:
   Timestamp() : micro_seconds_since_epoch_(0) {
 
-  }
+  }  
 
   // 禁止从int到Timestamp的隐式类型转换
   explicit Timestamp(uint64_t arg) : micro_seconds_since_epoch_(arg) {

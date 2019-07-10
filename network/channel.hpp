@@ -19,6 +19,8 @@ class Channel {
   void set_write_cb(event_callback& cb) { write_cb_ = cb; }
   void set_error_cb(event_callback& cb) { error_cb_ = cb; }
 
+  void handle_event();
+
  private:
   static const int kNoneEvent;
   static const int kReadEvent;
