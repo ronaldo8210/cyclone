@@ -17,6 +17,8 @@ class Timestamp {
 
   }  
 
+  // 编译器自动合成拷贝构造函数和重载拷贝赋值运算符
+
   // 禁止从int到Timestamp的隐式类型转换
   explicit Timestamp(uint64_t arg) : micro_seconds_since_epoch_(arg) {
 

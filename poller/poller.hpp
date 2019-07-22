@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <map>
+#include <timestamp.hpp>
 
 namespace cyclone {
 
@@ -29,9 +30,12 @@ class Poller {
 
   virtual void remove_channel(Channel *channel) = 0;
 
+  virtual bool has_channel(Channel *channel) const;
+
   static Poller* get_poller(EventLoop *event_loop);
   
  protected:
+  // Poller类实例是io_loop内所有channel的实际管理者
   typedef std::map<int, Channel*> ChannelMap;
 
   ChannelMap channels_;

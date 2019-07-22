@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/socket.h>
+#include <sys/uio.h>
 #include <unistd.h>
 
 namespace cyclone {
@@ -66,6 +67,10 @@ int accept(int sockfd, struct sockaddr_in6 *addr) {
 
 ssize_t read(int sockfd, void *buf, size_t count) {
   return ::read(sockfd, buf, count);
+}
+
+ssize_t readv(int sockfd, const struct iovec *iov, int iovcnt) {
+  return ::readv(sockfd, iov, iovcnt);
 }
 
 ssize_t write(int sockfd, const void *buf, size_t count) {

@@ -48,11 +48,19 @@ class EventLoop {
 
   void wakeup();
 
+  void update_channel(Channel *channel);
+
+  void remove_channel(Channel *channel);
+
+  void has_channel(Channel *channel);
+
  private:
   std::thread::id thread_id_;  
 
   static EventLoop* & get_loop_of_current_thread();
 
+  // event_loop不负责管理channel，仅是保存激活的channel的指针
+  // 通过激活的channel去调用对应的connection实例中的回调
   typedef std::vector<Channel*> ChannelList;
 
   bool looping_;

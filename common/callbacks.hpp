@@ -16,5 +16,6 @@ typedef std::shared_ptr<Connection> connection_ptr;
 typedef std::function<void (const connection_ptr&)> connect_callback;
 typedef std::function<void (const connection_ptr&)> message_callback;
 typedef std::function<void (const connection_ptr&)> write_complete_callback;
+typedef std::function<void (const connection_ptr&)> close_callback;
 
 }  // namespace cyclone

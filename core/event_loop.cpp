@@ -9,6 +9,7 @@
 
 #include <channel.hpp>
 #include <poller.hpp>
+#include <assert.h>
 #include <unistd.h>
 
 namespace cyclone {
@@ -49,7 +50,7 @@ void EventLoop::loop() {
     event_handling_ = true;
     for (Channel *channel : active_channels_) {
       curr_active_channel_ = channel;
-      channel->handle_event();
+      channel->handle_event(poll_return_ts_);
     }
     event_handling_ = false;
 
@@ -115,6 +116,27 @@ void EventLoop::exec_pending_functors() {
 
 void EventLoop::wakeup() {
 
+}
+
+void EventLoop::update_channel(Channel *channel) {
+  // 所有channel的update操作都在io_loop线程中完成，串行操作，不需要加锁
+  assert(channel->io_loop() == this);
+  assert_in_loop_thread();
+  poller_->update_channel(channel);
+}
+
+void EventLoop::remove_channel(Channel *channel) {
+  // 不需要加锁
+  assert(channel->io_loop() == this);
+  assert_in_loop_thread();
+  poller_->remove_channel(channel);
+}
+
+void EventLoop::has_channel(Channel *channel) {
+  // 不需要加锁
+  assert(channel->io_loop() == this);
+  assert_in_loop_thread();
+  poller_->has_channel(channel);
 }
 
 }  // namespace cyclone
