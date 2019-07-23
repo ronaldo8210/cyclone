@@ -10,6 +10,7 @@
 #include <callbacks.hpp>
 #include <inet_address.hpp>
 #include <nocopyable.hpp>
+#include <timestamp.hpp>
 
 #include <memory>
 
@@ -52,6 +53,11 @@ class Connection : public nocopyable, public enable_shared_from_this<Connection>
     close_cb_ = close_cb;
   }
 
+  void set_highwater_mark_callback(highwater_mark_callback &highwater_mark_cb, size_t highwater_mark) {
+    highwater_mark_cb_ = highwater_mark_cb;
+    highwater_mark_ = highwater_mark;
+  }
+
   // 通常在worker线程池中被调用 
   // 为避免buffer的读写竞态, 内部会调用send_in_io_loop() 将实际的写操作放到io_loop的task队列中
   void send(const char *message, size_t len);
@@ -70,7 +76,7 @@ class Connection : public nocopyable, public enable_shared_from_this<Connection>
  private:
   enum state_e { kConnecting, kConnected, kDisConnecting, kDisconnected };
 
-  void handle_read();
+  void handle_read(Timestamp recv_time);
 
   void handle_write();
 
@@ -82,6 +88,8 @@ class Connection : public nocopyable, public enable_shared_from_this<Connection>
 
   void shutdown_in_io_loop();
 
+  void set_state(state_e st) { state_ = st; }
+
   connect_callback connect_cb_;
 
   // 从fd读到数据后，执行的回调，一般是用户在自定义server中设置的回调
@@ -90,6 +98,8 @@ class Connection : public nocopyable, public enable_shared_from_this<Connection>
   write_complete_callback write_complete_cb_;
 
   close_callback close_cb_; 
+
+  highwater_mark_callback highwater_mark_cb_;
 
   EventLoop *io_loop_;
 
@@ -106,6 +116,8 @@ class Connection : public nocopyable, public enable_shared_from_this<Connection>
   Buffer recv_buffer_;
 
   Buffer send_buffer_;
+
+  size_t highwater_mark_;
 
   state_e state_;
 };
