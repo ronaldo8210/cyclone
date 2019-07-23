@@ -8,6 +8,7 @@
 
 #include <callbacks.hpp>
 #include <map>
+#include <memory>
 #include <string>
 
 using namespace std;
@@ -25,25 +26,33 @@ class TcpServer {
 
   ~TcpServer();
 
-  void set_connect_callback(connect_callback &cb);
+  void set_connect_callback(connect_callback &cb) {
+    connect_cb_ = cb;    
+  }
 
-  void set_message_callback(message_callback &cb);
+  void set_message_callback(message_callback &cb) {
+    message_cb_ = cb;  
+  }
 
-  void set_write_complete_callback(write_complete_callback &cb);
+  void set_write_complete_callback(write_complete_callback &cb) {
+    write_complete_cb_ = cb;    
+  }
 
   void start();
 
   void set_io_thread_num(int io_thread_num);
 
-  EventLoop* acceptor_loop();
+  EventLoop* acceptor_loop() { return acceptor_loop_; }
 
  private:
   // connection实例必须用shared_ptr管理，因为要用到shared_from_this和weak_ptr
   typedef map<string, connection_ptr> connection_map;
 
-  void create_connection(int conn_fd);
+  void create_connection(int connfd, const InetAddress &peer_addr);
 
-  void remove_connection();
+  void remove_connection(const connection_ptr &conn);
+
+  void remove_connection_in_loop(const connection_ptr &conn);
 
   connect_callback connect_cb_;
 
@@ -53,17 +62,17 @@ class TcpServer {
 
   EventLoop *acceptor_loop_;
 
-  EventLoopThreadPool *io_thread_pool_;
+  shared_ptr<EventLoopThreadPool> io_thread_pool_;
 
-  Acceptor *acceptor_;
+  unique_ptr<Acceptor> acceptor_;
+
+  int next_conn_id_;
 
   connection_map connections_;
 
   bool started_;
 
   int io_thread_num_;
-
-  int next_conn_id_;
 };
 
 }  // namespace cyclone

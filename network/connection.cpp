@@ -14,11 +14,12 @@
 
 namespace cyclone {
 
-Connection::Connection(EventLoop *io_loop, int fd, const InetAddress &local_addr, 
-        const InetAddress &peer_addr) 
+Connection::Connection(EventLoop *io_loop, int fd, string name,
+        const InetAddress &local_addr, const InetAddress &peer_addr) 
     : io_loop_(io_loop), 
     socket_(new Socket(fd)), 
-    channel_(new Channel(io_loop, fd)), 
+    channel_(new Channel(io_loop, fd)),
+    name_(name),
     state_(kConnecting),
     local_addr_(local_addr), 
     peer_addr_(peer_addr) {

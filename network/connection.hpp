@@ -13,6 +13,7 @@
 #include <timestamp.hpp>
 
 #include <memory>
+#include <string>
 
 using namespace std;
 
@@ -26,8 +27,8 @@ class Channel;
 
 class Connection : public nocopyable, public enable_shared_from_this<Connection> {
  public:
-  Connection(EventLoop *io_loop, int fd, const InetAddress &local_addr, 
-          const InetAddress &peer_addr);
+  Connection(EventLoop *io_loop, int fd, string name,
+          const InetAddress &local_addr, const InetAddress &peer_addr);
 
   ~Connection();
   
@@ -72,6 +73,8 @@ class Connection : public nocopyable, public enable_shared_from_this<Connection>
   void connection_established();
 
   void connection_destroyed();
+
+  const string& name() const { return name_; }
 
  private:
   enum state_e { kConnecting, kConnected, kDisConnecting, kDisconnected };
@@ -120,6 +123,8 @@ class Connection : public nocopyable, public enable_shared_from_this<Connection>
   size_t highwater_mark_;
 
   state_e state_;
+
+  const string name_;
 };
 
 }  // namespace cyclone
