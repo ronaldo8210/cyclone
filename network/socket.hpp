@@ -18,6 +18,8 @@ class Socket {
 
   ~Socket();
 
+  int fd() const { return sockfd_; }
+
   void bind(const InetAddress &local_addr);
 
   void listen();

@@ -19,9 +19,13 @@ class InetAddress {
  public:
   InetAddress();
 
+  ~InetAddress();
+
   const struct sockaddr* get_sock_addr() const {
     return sockops::sockaddr_cast(&addr6_);
   }
+
+  sa_family_t family() const { return addr_.sin_family; }
 
  private:
   union {

@@ -9,6 +9,12 @@
 
 namespace cyclone {
 
+InetAddress::InetAddress() {
 
+}
+
+InetAddress::~InetAddress() {
+
+}
     
 }  // namespace cyclone
