@@ -16,6 +16,7 @@ namespace cyclone {
 
 class EventLoop;
 
+// I/O事件回调的分发器
 class Channel : public nocopyable {
  public:
   typedef function<void()> event_callback;
@@ -130,6 +131,8 @@ class Channel : public nocopyable {
   // epoll返回时fd上的触发事件
   int revents_;
 
+  // 1、如果channel对应的是Acceptor对象，则read_cb_是::accept操作
+  // 2、如果channel对应的是Connection对象，则read_cb_是::read操作
   read_event_callback read_cb_;
 
   event_callback write_cb_;

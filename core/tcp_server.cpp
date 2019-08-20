@@ -20,6 +20,7 @@ TcpServer::TcpServer(EventLoop *acceptor_loop, const InetAddress &listen_addr)
     acceptor_(new Acceptor(acceptor_loop, listen_addr)), 
     io_thread_pool_(new EventLoopThreadPool(acceptor_loop)), 
     next_conn_id_(1) {
+  // bind传递this指针是安全的
   acceptor_->set_new_connection_cb(
           bind(&TcpServer::create_connection, this, placeholders::_1, placeholders::_2));
 }
@@ -43,6 +44,7 @@ void TcpServer::start() {
           bind(&Acceptor::listen, acceptor_.get()));
 }
 
+// 只会在acceptor loop线程中被调用
 void TcpServer::create_connection(int connfd, const InetAddress &peer_addr) {
   EventLoop *io_loop = io_thread_pool_->get_next_io_loop();
   
@@ -68,12 +70,13 @@ void TcpServer::remove_connection(const connection_ptr &conn) {
           bind(&TcpServer::remove_connection_in_loop, this, conn));
 }
 
+// 只在acceptor loop线程中被调用，对connection map的erase操作是串行的，线程安全
 void TcpServer::remove_connection_in_loop(const connection_ptr &conn) {
   size_t n = connections_.erase(conn->name());
 
   EventLoop *io_loop = conn->io_loop();
   io_loop->add_functor_queue(
-          bind(&Connection::connection_destroyed, conn));
+          bind(&Connection::connection_destroyed, conn));  // bind会将conn这个shared_ptr复制一份，引用计数+1
 }
 
 }  // namespace cyclone

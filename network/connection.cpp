@@ -35,6 +35,7 @@ Connection::~Connection() {
   }
 }
 
+// 在worker线程中调用
 void Connection::send(const char *message, size_t len) {
   assert(state_ == kConnected);
 
@@ -52,6 +53,10 @@ void Connection::send(Buffer *buffer) {
 
 }
 
+// 在worker线程中调用
+// 调用shutdown关闭服务器写端的场景：
+// 1、短连接，一次连接就处理一个任务，调用send完后就可以调用shutdown
+// 2、长连接，如果出现非法数据，服务器可以选择用shutdown关闭写功能
 void Connection::shutdown() {
   if (state_ = kConnected) {
     set_state(kDisConnecting);
@@ -118,6 +123,9 @@ void Connection::handle_write() {
         }
 
         if (state_ == kDisConnecting) {
+          // 之前有过半关闭的动作，但由于还有数据未写完，所以当时没有调用shutdown，只设置了状态为DisConnecting
+          // 现在数据写完了，可以调用shutdown了
+          // 要保证所有对fd的操作都在io线程完成
           shutdown_in_io_loop();
         }
       }
@@ -186,6 +194,8 @@ void Connection::send_in_io_loop(const char *data, size_t len) {
 
 void Connection::shutdown_in_io_loop() {
   io_loop_->assert_in_loop_thread();
+  // 如果发送缓存还有数据没有写入fd，则只讲状态置为DisConnecting，不能立即调用::shutdown
+  // 在handle_write中将数据全部写入fd后会调用::shutdown
   if (!channel_->is_writing()) {
     socket_->shutdown();
   }

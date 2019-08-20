@@ -54,6 +54,10 @@ class TcpServer {
 
   void remove_connection_in_loop(const connection_ptr &conn);
 
+  // 被赋值为用户在自定义Server中设置的回调函数
+  // TcpServer对象被包含在用户自定义Server中，用户自定义Server对象一般是main函数的栈上对象，生命周期是随进程一直存在的
+  // 所以用bind的时候传入用户自定义Server对象的this指针即可，不用担心用户自定义Server对象被意外析构
+  // 这些回调被所有io线程调用，因为回调函数是无状态的，且参数是各个Connection实例的引用，所以线程安全
   connect_callback connect_cb_;
 
   message_callback message_cb_;
@@ -68,6 +72,7 @@ class TcpServer {
 
   int next_conn_id_;
 
+  // 在这里集中管理所有Connection实例，每个Connection用shared_ptr管理
   connection_map connections_;
 
   bool started_;

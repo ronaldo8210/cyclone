@@ -10,6 +10,7 @@ namespace cyclone {
 
 class InetAddress;
 
+// 对fd进行RAII管理，Socket类实例析构的时候（Connection实例析构的时候）才真正关闭fd描述符
 class Socket {
  public:
   explicit Socket(int sockfd) : sockfd_(sockfd) {

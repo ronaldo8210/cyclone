@@ -2,36 +2,32 @@ CUR_DIR=/work_space/cyclone
 
 CORE_DIR=${CUR_DIR}/core
 NETWORK_DIR=${CUR_DIR}/network
-SAMPLE_DIR=${CUR_DIR}/sample
 COMMON_DIR=${CUR_DIR}/common
 POOL_DIR=${CUR_DIR}/pool
 POLLER_DIR=${CUR_DIR}/poller
-
-BOOST_INC_DIR=/usr/include/boost
-BOOST_LIB_DIR=/usr/lib
+LIB_DIR=${CUR_DIR}/lib
 
 INC_DIR= -I${CUR_DIR} \
 		 -I${CORE_DIR} \
 		 -I${NETWORK_DIR} \
 		 -I${COMMON_DIR} \
 		 -I${POOL_DIR} \
-		 -I${BOOST_INC_DIR} \
 		 -I${POLLER_DIR}
 
 SRC = ${wildcard ${CORE_DIR}/*.cpp} \
 	  ${wildcard ${NETWORK_DIR}/*.cpp} \
 	  ${wildcard ${COMMON_DIR}/*.cpp} \
       ${wildcard ${POOL_DIR}/*.cpp} \
-      ${wildcard ${POLLER_DIR}/*.cpp} \
-	  ${wildcard ${SAMPLE_DIR}/main.cpp}
+      ${wildcard ${POLLER_DIR}/*.cpp} 
 OBJ = ${patsubst %.cpp, %.o, ${SRC}}
 
-TARGET=dsp_engine
+TARGET=libcyclone.a
 CC=g++
-CCFLAGS=-g -Wall -std=c++11 -L${BOOST_LIB_DIR} -lpthread ${INC_DIR}
+CCFLAGS=-g -Wall -std=c++11 -lpthread ${INC_DIR}
 
-${TARGET}: ${OBJ}
-	${CC} ${OBJ} -std=c++11 -pthread -Wl,--no-as-needed -o $@
+all:${OBJ}
+	ar rcs $(TARGET) $^
+	mv ${TARGET} ${LIB_DIR}
 	@echo "compile success!!"
 
 ${OBJ}:%.o:%.cpp
@@ -45,7 +41,7 @@ clean:
 	@rm -f *~
 	@echo "clean tempreator files done."
 
-	@rm -f ${TARGET}
-	@echo "clean target files done."
+	@rm -f ${LIB_DIR}/${TARGET}
+	@echo "clean .lib file done."
 
 	@echo "clean complete."

@@ -17,6 +17,7 @@ Acceptor::Acceptor(EventLoop *base_loop, const InetAddress &listen_addr, bool re
     accept_sock_(sockops::create_nonblocking(listen_addr.family())), 
     accept_channel_(base_loop_, accept_sock_.fd()) {
   accept_sock_.bind(listen_addr);
+  // Acceptor的生命期是随main进程长久存在的，所以bind的时候传递this指针是安全的
   accept_channel_.set_read_cb(bind(&Acceptor::handle_read, this));
 }
 
